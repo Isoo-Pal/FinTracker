@@ -1,0 +1,37 @@
+{% extends "finance/layout.html" %}
+{% block title %}Transactions{% endblock title %}
+
+{% block content %}
+
+<div class="min-vh-100" style="background: linear-gradient(135deg, #eef2ff, #f5e8ff);">
+    <div class="mx-5" >
+        <h1 class = "text-center pt-4">Transaction List</h1>
+        <table class="table table-hover table-bordered mt-4" style="background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(6px);">
+            <thead class="table-danger">
+                <tr>
+                    <th scope="col">Sr No.</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Transation Type</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <th scope="row">{{ transaction.id }}</th>
+                        <td>{{ transaction.title }}</td>
+                        <td>${{ transaction.amount|floatformat:2 }}</td>
+                        {% if transaction.transaction_type == 'Income' %}
+                            <td>Credit</td>
+                        {% else %}
+                            <td>Debit</td>
+                        {% endif %}
+                        <td>{{ transaction.date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

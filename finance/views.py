@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.views import View
 from .forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import *
 
 # Create your views here.
 def home(request):
@@ -35,3 +36,9 @@ class TransactionView(LoginRequiredMixin, View):
             transaction.save()
             return redirect('dashboard')
         return render(request, 'finance/transaction_form.html', {'form' : transaction})
+    
+
+class TransactionListView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        transactions = Transaction.objects.all()
+        return render(request, 'finance/transaction_list.html', {'transactions' : transactions})
