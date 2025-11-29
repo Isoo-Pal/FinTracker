@@ -14,16 +14,22 @@
       <ul class="navbar-nav">
         {% if user.is_authenticated %}
         <li class="nav-item">
-            <form action="{% url 'logout' %}" method="post" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="nav-link navcontent fw-semibold">Logout</button>
-            </form>
+          <a class="nav-link  fw-semibold navcontent" aria-current="page" href="{% url "dashboard" %}">Dashboard</a>
         </li>
         <li class="nav-item">
           <a class="nav-link  fw-semibold navcontent" aria-current="page" href="{% url "transaction_add" %}">Add Transaction</a>
         </li>
         <li class="nav-item">
           <a class="nav-link  fw-semibold navcontent" aria-current="page" href="{% url "transaction_list" %}">All Transactions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link  fw-semibold navcontent" aria-current="page" href="{% url "goal_add" %}">Add Goal</a>
+        </li>
+        <li class="nav-item">
+            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="nav-link navcontent fw-semibold">Logout</button>
+            </form>
         </li>
         {% else %}
         <li class="nav-item">
