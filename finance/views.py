@@ -5,9 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from django.db.models import Sum
 
-# Create your views here.
-def home(request):
-    return HttpResponse("<h1>Hello</h1>")
+# Create your views here
 
 
 class RegisterView(View):
@@ -24,16 +22,32 @@ class RegisterView(View):
 class DashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         transactions = Transaction.objects.filter(user = request.user)
-        goal = Goal.objects.filter(user = request.user)
+        goals = Goal.objects.filter(user = request.user)
         # calculating total income and expenses
         total_income = Transaction.objects.filter(user=request.user, transaction_type="Income").aggregate(Sum('amount'))['amount__sum'] or 0
         total_expense = Transaction.objects.filter(user=request.user, transaction_type="Expense").aggregate(Sum('amount'))['amount__sum'] or 0
         net_savings = total_income - total_expense
+        remaining_savings = net_savings
+        goal_progress = []
+        for goal in goals:
+            if remaining_savings >= goal.target_amount:
+                goal_progress.append({'goal' : goal, 'progress' :100})
+                remaining_savings -= goal.target_amount
+            elif remaining_savings > 0:
+                progress = (remaining_savings / goal.target_amount) * 100
+                goal_progress.append({'goal' : goal, 'progress' : progress})
+                remaining_savings = 0
+            else:
+                goal_progress.append({'goal': goal, 'progress' : 0})
+
         context = {
             'transactions' : transactions,
             'total_income' : total_income,
             'total_expense' : total_expense,
-            'net_savings' : net_savings
+            'net_savings' : net_savings,
+            'goal_progress' : goal_progress,
+            'goals' : goals,
+            'remaining_savings' : remaining_savings 
         }
         return render(request, 'finance/dashboard.html', context)
     
@@ -53,7 +67,7 @@ class TransactionView(LoginRequiredMixin, View):
 
 class TransactionListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        transactions = Transaction.objects.all()
+        transactions = Transaction.objects.filter(user = request.user)
         return render(request, 'finance/transaction_list.html', {'transactions' : transactions})
     
 class AddGoalView(LoginRequiredMixin, View):

@@ -3,39 +3,80 @@
 {% block title %}Dashboard{% endblock title %}
 
 {% block content %}
-<div>
-    <h1>Welcome to Your Finance Dashboard</h1>
-    <h1>{{ request.user|capfirst }}</h1>
-    <p>Track your income, expense, and goals effectively</p>
-    <div class="row">
-        <div class="col-md-4 mb-3 mb-sm-0">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+<div class="min-vh-100" style="background: linear-gradient(135deg, #eef2ff, #f5e8ff);">
+    <div class="text-center py-4">
+        <h1 class="fw-bold">Welcome to Your Finance Dashboard</h1>
+        <h2 style="color: #EA2264" class="fw-bold">{{ request.user|capfirst }}</h2>
+        <p>Track your income, expense, and goals effectively</p>
+        <div class="row justify-content-center py-5">
+            <div class="col-md-3 mb-3 mb-sm-0">
+                <div class="card border-0 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Total Income</h5>
+                        <p class="card-text text-primary fw-bold fs-5">₹{{ total_income|floatformat:2 }}</p>
+                        
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+            <div class="col-md-3">
+                <div class="card border-0 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Total Expense</h5>
+                        <p class="card-text text-danger fw-bold fs-5">₹{{ total_expense|floatformat:2 }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+            <div class="col-md-3">
+                <div class="card border-0 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Net Saving</h5>
+                        <p class="card-text text-primary fw-bold fs-5">₹{{ net_savings|floatformat:2 }}</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
+
+    {% comment %} goals section {% endcomment %}
+
+    <div class="container">
+
+        <h2 class="text-center mb-4">Your Goals</h2>
+
+        {% for goal in goals %}
+            <div class="row justify-content-center">
+
+                <!-- Goal Card -->
+                <div class="col-md-11 mb-4">
+                    <div class="card border-0 shadow p-3">
+                        
+                        <div class="d-flex justify-content-between">
+                            <h5 class="fw-bold">{{ goal.name }}</h5>
+                        </div>
+
+                        <p class="text-muted mb-1">Target Amount: ₹{{ goal.target_amount }}</p>
+                        <p class="text-muted mb-1">Saved: ₹{{ remaining_savings }}</p>
+
+                        <!-- Progress -->
+                        {% for item in goal_progress %}
+                            {% if item.goal.id == goal.id %}
+                                <div class="progress mt-2" style="height: 10px;">
+                                    <div class="progress-bar bg-success" style="width: {{ item.progress }}%;">
+                                    </div>
+                                </div>
+                                
+
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span class="text-muted small">{{ item.progress|floatformat:2 }}% Completed</span>
+                                    <span class="text-muted small">Deadline: {{ goal.deadline }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock content %}
